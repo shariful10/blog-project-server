@@ -41,7 +41,26 @@ const getAllBlogsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
         .select("-updatedAt");
     return result;
 });
+const updateBlogIntoDB = (id, token, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!token) {
+        throw new AppError_1.default(403, "You are not authorized");
+    }
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtAccessSecret);
+    const { email } = decoded;
+    const user = yield user_model_1.default.isUserExists(email);
+    const blog = yield blog_model_1.default.findById(id);
+    // Checking if this user owns this blog
+    if (!(blog === null || blog === void 0 ? void 0 : blog.author.equals(user._id))) {
+        throw new AppError_1.default(403, "You are not authorized to update this blog");
+    }
+    const result = yield blog_model_1.default.findByIdAndUpdate(id, payload, {
+        new: true,
+        runValidators: true,
+    });
+    return result;
+});
 exports.BlogServices = {
     createBlogIntoDB,
     getAllBlogsFromDB,
+    updateBlogIntoDB,
 };

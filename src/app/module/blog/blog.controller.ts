@@ -34,7 +34,25 @@ const getAllBlogs = catchAsync(async (req, res) => {
   });
 });
 
+const updateBlog = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const token = req.headers.authorization;
+  const result = await BlogServices.updateBlogIntoDB(
+    id,
+    token as string,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Blog updated successfully",
+    data: result,
+  });
+});
+
 export const BlogControllers = {
   createBlog,
   getAllBlogs,
+  updateBlog,
 };
