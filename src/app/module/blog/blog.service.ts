@@ -67,7 +67,41 @@ const updateBlogIntoDB = async (
   const result = await Blog.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
-  });
+  })
+    .select("-__v")
+    .select("-createdAt")
+    .select("-updatedAt")
+    .select("-isPublished");
+
+  return result;
+};
+
+const deleteBlogFromDB = async (id: string, token: string) => {
+  if (!token) {
+    throw new AppError(403, "You are not authorized");
+  }
+
+  const decoded = jwt.verify(
+    token,
+    config.jwtAccessSecret as string,
+  ) as JwtPayload;
+
+  const { email } = decoded;
+
+  const user = await User.isUserExists(email);
+
+  const blog = await Blog.findById(id);
+
+  // Checking if this user owns this blog
+  if (!blog?.author.equals(user._id)) {
+    throw new AppError(403, "You are not authorized to delete this blog");
+  }
+
+  const result = await Blog.findByIdAndDelete(id)
+    .select("-__v")
+    .select("-createdAt")
+    .select("-updatedAt")
+    .select("-isPublished");
 
   return result;
 };
@@ -76,4 +110,5 @@ export const BlogServices = {
   createBlogIntoDB,
   getAllBlogsFromDB,
   updateBlogIntoDB,
+  deleteBlogFromDB,
 };
