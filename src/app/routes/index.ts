@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { AdminRoutes } from "../module/Admin/admin.route";
 import { AuthRoutes } from "../module/Auth/auth.route";
 import { BlogRoutes } from "../module/blog/blog.route";
 
@@ -12,6 +13,10 @@ const moduleRoutes = [
   {
     path: "/blogs",
     route: BlogRoutes,
+  },
+  {
+    path: "/admin",
+    route: AdminRoutes,
   },
 ];
 

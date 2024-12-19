@@ -49,6 +49,10 @@ const updateBlogIntoDB = (id, token, payload) => __awaiter(void 0, void 0, void 
     const { email } = decoded;
     const user = yield user_model_1.default.isUserExists(email);
     const blog = yield blog_model_1.default.findById(id);
+    // Check if the blog exists
+    if (!blog) {
+        throw new AppError_1.default(404, "Blog not found");
+    }
     // Checking if this user owns this blog
     if (!(blog === null || blog === void 0 ? void 0 : blog.author.equals(user._id))) {
         throw new AppError_1.default(403, "You are not authorized to update this blog");
@@ -71,6 +75,10 @@ const deleteBlogFromDB = (id, token) => __awaiter(void 0, void 0, void 0, functi
     const { email } = decoded;
     const user = yield user_model_1.default.isUserExists(email);
     const blog = yield blog_model_1.default.findById(id);
+    // Check if the blog exists
+    if (!blog) {
+        throw new AppError_1.default(404, "Blog not found");
+    }
     // Checking if this user owns this blog
     if (!(blog === null || blog === void 0 ? void 0 : blog.author.equals(user._id))) {
         throw new AppError_1.default(403, "You are not authorized to delete this blog");
