@@ -33,6 +33,15 @@ const createBlogIntoDB = (payload, token) => __awaiter(void 0, void 0, void 0, f
     const result = yield blog_model_1.default.create(newPayload);
     return result;
 });
+const getAllBlogsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield blog_model_1.default.find()
+        .select("-__v")
+        .select("-isPublished")
+        .select("-createdAt")
+        .select("-updatedAt");
+    return result;
+});
 exports.BlogServices = {
     createBlogIntoDB,
+    getAllBlogsFromDB,
 };

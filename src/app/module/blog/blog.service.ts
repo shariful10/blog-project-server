@@ -30,6 +30,16 @@ const createBlogIntoDB = async (payload: TBlog, token: string) => {
   return result;
 };
 
+const getAllBlogsFromDB = async () => {
+  const result = await Blog.find()
+    .select("-__v")
+    .select("-isPublished")
+    .select("-createdAt")
+    .select("-updatedAt");
+  return result;
+};
+
 export const BlogServices = {
   createBlogIntoDB,
+  getAllBlogsFromDB,
 };

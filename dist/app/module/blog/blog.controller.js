@@ -33,6 +33,16 @@ const createBlog = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const getAllBlogs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield blog_service_1.BlogServices.getAllBlogsFromDB();
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Blogs fetched successfully",
+        data: result,
+    });
+}));
 exports.BlogControllers = {
     createBlog,
+    getAllBlogs,
 };
