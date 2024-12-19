@@ -45,14 +45,12 @@ const globalErrorHandler = (err, req, res, _next) => {
         statusCode = err === null || err === void 0 ? void 0 : err.statusCode;
         message = err === null || err === void 0 ? void 0 : err.message;
         error = {
-            path: "",
             details: err === null || err === void 0 ? void 0 : err.message,
         };
     }
     else if (err instanceof Error) {
         message = err === null || err === void 0 ? void 0 : err.message;
         error = {
-            path: "",
             details: err === null || err === void 0 ? void 0 : err.message,
         };
     }

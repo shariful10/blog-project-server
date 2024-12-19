@@ -41,13 +41,11 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     statusCode = err?.statusCode;
     message = err?.message;
     error = {
-      path: "",
       details: err?.message,
     };
   } else if (err instanceof Error) {
     message = err?.message;
     error = {
-      path: "",
       details: err?.message,
     };
   }

@@ -33,9 +33,9 @@ userSchema.post("save", function (doc, next) {
     next();
 });
 // Check if the user exists
-userSchema.statics.isUserExists = function (id) {
+userSchema.statics.isUserExists = function (email) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield this.findById(id).select("+password");
+        return yield this.findOne({ email }).select("+password");
     });
 };
 // Check if passwords are matched

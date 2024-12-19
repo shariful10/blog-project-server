@@ -28,8 +28,10 @@ userSchema.post("save", function (doc, next) {
 });
 
 // Check if the user exists
-userSchema.statics.isUserExists = async function (id: string): Promise<TUser> {
-  return await this.findById(id).select("+password");
+userSchema.statics.isUserExists = async function (
+  email: string,
+): Promise<TUser> {
+  return await this.findOne({ email }).select("+password");
 };
 
 // Check if passwords are matched
