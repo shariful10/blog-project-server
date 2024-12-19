@@ -1,5 +1,4 @@
 "use strict";
-/* eslint-disable @typescript-eslint/no-unused-vars */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,16 +10,13 @@ const handleCastError_1 = __importDefault(require("../errors/handleCastError"));
 const handleDuplicateError_1 = __importDefault(require("../errors/handleDuplicateError"));
 const handleValidationError_1 = __importDefault(require("../errors/handleValidationError"));
 const handleZodError_1 = __importDefault(require("../errors/handleZodError"));
-const globalErrorHandler = (err, req, res, next) => {
-    // Settings default values
+const globalErrorHandler = (err, req, res, _next) => {
     let statusCode = 500;
     let message = "Something went wrong!";
-    let error = [
-        {
-            path: "",
-            details: "Something went wrong!",
-        },
-    ];
+    let error = {
+        path: "",
+        details: "Something went wrong!",
+    };
     if (err instanceof zod_1.ZodError) {
         const simplifiedError = (0, handleZodError_1.default)(err);
         statusCode = simplifiedError === null || simplifiedError === void 0 ? void 0 : simplifiedError.statusCode;
@@ -48,23 +44,18 @@ const globalErrorHandler = (err, req, res, next) => {
     else if (err instanceof AppError_1.default) {
         statusCode = err === null || err === void 0 ? void 0 : err.statusCode;
         message = err === null || err === void 0 ? void 0 : err.message;
-        error = [
-            {
-                path: "",
-                details: err === null || err === void 0 ? void 0 : err.message,
-            },
-        ];
+        error = {
+            path: "",
+            details: err === null || err === void 0 ? void 0 : err.message,
+        };
     }
     else if (err instanceof Error) {
         message = err === null || err === void 0 ? void 0 : err.message;
-        error = [
-            {
-                path: "",
-                details: err === null || err === void 0 ? void 0 : err.message,
-            },
-        ];
+        error = {
+            path: "",
+            details: err === null || err === void 0 ? void 0 : err.message,
+        };
     }
-    // Ultimate return
     res.status(statusCode).json({
         success: false,
         message,

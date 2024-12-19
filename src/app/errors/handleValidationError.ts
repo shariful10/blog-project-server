@@ -4,14 +4,13 @@ import { TErrorSources, TGenericErrorResponse } from "../interface/error";
 const handleValidationError = (
   err: mongoose.Error.ValidationError,
 ): TGenericErrorResponse => {
-  const error: TErrorSources = Object.values(err.errors).map(
-    (val: mongoose.Error.ValidatorError | mongoose.Error.CastError) => {
-      return {
-        path: val?.path,
-        details: val?.message,
-      };
-    },
-  );
+  const val = Object.values(err.errors)[0] as
+    | mongoose.Error.ValidatorError
+    | mongoose.Error.CastError;
+  const error: TErrorSources = {
+    path: val?.path,
+    details: val?.message,
+  };
 
   const statusCode = 400;
 

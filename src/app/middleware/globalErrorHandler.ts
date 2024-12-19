@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
 import config from "../config";
@@ -10,17 +9,13 @@ import handleValidationError from "../errors/handleValidationError";
 import handleZodError from "../errors/handleZodError";
 import { TErrorSources } from "../interface/error";
 
-const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // Settings default values
+const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   let statusCode = 500;
   let message = "Something went wrong!";
-
-  let error: TErrorSources = [
-    {
-      path: "",
-      details: "Something went wrong!",
-    },
-  ];
+  let error: TErrorSources = {
+    path: "",
+    details: "Something went wrong!",
+  };
 
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
@@ -45,23 +40,18 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   } else if (err instanceof AppError) {
     statusCode = err?.statusCode;
     message = err?.message;
-    error = [
-      {
-        path: "",
-        details: err?.message,
-      },
-    ];
+    error = {
+      path: "",
+      details: err?.message,
+    };
   } else if (err instanceof Error) {
     message = err?.message;
-    error = [
-      {
-        path: "",
-        details: err?.message,
-      },
-    ];
+    error = {
+      path: "",
+      details: err?.message,
+    };
   }
 
-  // Ultimate return
   res.status(statusCode).json({
     success: false,
     message,
