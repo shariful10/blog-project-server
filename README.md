@@ -1,4 +1,4 @@
-# Blog Project Backend
+# Blog Project Server
 
 ## Live URL
 
