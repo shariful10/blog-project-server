@@ -36,7 +36,7 @@ Blog Project Server is a RESTful API built with Node.js, Express.js, Mongoose, a
 - Block user by userId
 - Delete a blog by ID
 
-### Prerequisites
+## Prerequisites
 
 - Node.js
 - npm
