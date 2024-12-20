@@ -1,4 +1,5 @@
 import catchAsync from "../../utils/catchAsync";
+import { httpStatusCode } from "../../utils/httpStatusCode";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 
@@ -10,7 +11,7 @@ const createUser = catchAsync(async (req, res) => {
   const result = { _id, name, email };
 
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: httpStatusCode.CREATED,
     success: true,
     message: "User registered successfully",
     data: result,
@@ -21,7 +22,7 @@ const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
 
   sendResponse(res, {
-    statusCode: 200,
+    statusCode: httpStatusCode.OK,
     success: true,
     message: "Login successful",
     data: result,

@@ -7,7 +7,11 @@ import catchAsync from "../utils/catchAsync";
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req, _res, next) => {
-    const token = req.headers.authorization;
+    let token = req.headers.authorization;
+
+    if (token && token.startsWith("Bearer")) {
+      token = req.headers.authorization?.split(" ")[1].trim();
+    }
 
     // If the token send from the client
     if (!token) {
@@ -35,16 +39,6 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (userStatus) {
       throw new AppError(403, "This user is blocked!");
     }
-
-    // if (
-    //   user.passwordChangedAt &&
-    //   User.isJWTIssuedBeforePasswordChanged(
-    //     user.passwordChangedAt,
-    //     iat as number,
-    //   )
-    // ) {
-    //   throw new AppError(401, "You are not authorized");
-    // }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(401, "You are not authorized");

@@ -1,5 +1,6 @@
 import config from "../../config";
 import AppError from "../../errors/AppError";
+import { httpStatusCode } from "../../utils/httpStatusCode";
 import { TUser } from "../user/user.interface";
 import User from "../user/user.model";
 import { TLoginUser } from "./auth.interface";
@@ -15,19 +16,19 @@ const loginUser = async (payload: TLoginUser) => {
 
   // Checking if the user is exist
   if (!user) {
-    throw new AppError(404, "User not found!");
+    throw new AppError(httpStatusCode.NOT_FOUND, "User not found!");
   }
 
   // Checking if the user is blocked
   const userStatus = user?.isBlocked;
 
   if (userStatus) {
-    throw new AppError(403, "This user is blocked!");
+    throw new AppError(httpStatusCode.FORBIDDEN, "This user is blocked!");
   }
 
   // Checking if the password is correct
   if (!(await User.isPasswordMatched(payload?.password, user.password))) {
-    throw new AppError(403, "Password is incorrect!");
+    throw new AppError(httpStatusCode.FORBIDDEN, "Password is incorrect!");
   }
 
   // Create token and send it to the client

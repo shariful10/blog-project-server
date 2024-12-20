@@ -14,29 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+const httpStatusCode_1 = require("../../utils/httpStatusCode");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const blog_service_1 = require("./blog.service");
 const createBlog = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.headers.authorization;
-    const blog = yield blog_service_1.BlogServices.createBlogIntoDB(req.body, token);
-    const { _id, title, content, author } = blog;
-    const result = {
-        _id,
-        title,
-        content,
-        author,
-    };
+    const user = req.user;
+    const result = yield blog_service_1.BlogServices.createBlogIntoDB(req.body, user);
     (0, sendResponse_1.default)(res, {
-        statusCode: 201,
+        statusCode: httpStatusCode_1.httpStatusCode.CREATED,
         success: true,
         message: "Blog created successfully",
         data: result,
     });
 }));
 const getAllBlogs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield blog_service_1.BlogServices.getAllBlogsFromDB();
+    const result = yield blog_service_1.BlogServices.getAllBlogsFromDB(req.query);
     (0, sendResponse_1.default)(res, {
-        statusCode: 200,
+        statusCode: httpStatusCode_1.httpStatusCode.OK,
         success: true,
         message: "Blogs fetched successfully",
         data: result,
@@ -44,10 +38,10 @@ const getAllBlogs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
 }));
 const updateBlog = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const token = req.headers.authorization;
-    const result = yield blog_service_1.BlogServices.updateBlogIntoDB(id, token, req.body);
+    const user = req.user;
+    const result = yield blog_service_1.BlogServices.updateBlogIntoDB(id, user, req.body);
     (0, sendResponse_1.default)(res, {
-        statusCode: 200,
+        statusCode: httpStatusCode_1.httpStatusCode.OK,
         success: true,
         message: "Blog updated successfully",
         data: result,
@@ -55,10 +49,10 @@ const updateBlog = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 const deleteBlog = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const token = req.headers.authorization;
-    yield blog_service_1.BlogServices.deleteBlogFromDB(id, token);
-    res.status(200).json({
-        statusCode: 200,
+    const user = req.user;
+    yield blog_service_1.BlogServices.deleteBlogFromDB(id, user);
+    res.status(httpStatusCode_1.httpStatusCode.OK).json({
+        statusCode: httpStatusCode_1.httpStatusCode.OK,
         success: true,
         message: "Blog deleted successfully",
     });

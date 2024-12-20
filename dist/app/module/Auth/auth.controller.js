@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+const httpStatusCode_1 = require("../../utils/httpStatusCode");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
 const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,7 +22,7 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     const { _id, name, email } = user;
     const result = { _id, name, email };
     (0, sendResponse_1.default)(res, {
-        statusCode: 201,
+        statusCode: httpStatusCode_1.httpStatusCode.CREATED,
         success: true,
         message: "User registered successfully",
         data: result,
@@ -30,7 +31,7 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.loginUser(req.body);
     (0, sendResponse_1.default)(res, {
-        statusCode: 200,
+        statusCode: httpStatusCode_1.httpStatusCode.OK,
         success: true,
         message: "Login successful",
         data: result,

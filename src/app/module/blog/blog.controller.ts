@@ -1,22 +1,16 @@
 import catchAsync from "../../utils/catchAsync";
+import { httpStatusCode } from "../../utils/httpStatusCode";
 import sendResponse from "../../utils/sendResponse";
+import { TUser } from "../user/user.interface";
 import { BlogServices } from "./blog.service";
 
 const createBlog = catchAsync(async (req, res) => {
-  const token = req.headers.authorization;
-  const blog = await BlogServices.createBlogIntoDB(req.body, token as string);
+  const user = req.user as TUser;
 
-  const { _id, title, content, author } = blog;
-
-  const result = {
-    _id,
-    title,
-    content,
-    author,
-  };
+  const result = await BlogServices.createBlogIntoDB(req.body, user);
 
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: httpStatusCode.CREATED,
     success: true,
     message: "Blog created successfully",
     data: result,
@@ -24,10 +18,10 @@ const createBlog = catchAsync(async (req, res) => {
 });
 
 const getAllBlogs = catchAsync(async (req, res) => {
-  const result = await BlogServices.getAllBlogsFromDB();
+  const result = await BlogServices.getAllBlogsFromDB(req.query);
 
   sendResponse(res, {
-    statusCode: 200,
+    statusCode: httpStatusCode.OK,
     success: true,
     message: "Blogs fetched successfully",
     data: result,
@@ -36,15 +30,12 @@ const getAllBlogs = catchAsync(async (req, res) => {
 
 const updateBlog = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const token = req.headers.authorization;
-  const result = await BlogServices.updateBlogIntoDB(
-    id,
-    token as string,
-    req.body,
-  );
+  const user = req.user as TUser;
+
+  const result = await BlogServices.updateBlogIntoDB(id, user, req.body);
 
   sendResponse(res, {
-    statusCode: 200,
+    statusCode: httpStatusCode.OK,
     success: true,
     message: "Blog updated successfully",
     data: result,
@@ -53,11 +44,12 @@ const updateBlog = catchAsync(async (req, res) => {
 
 const deleteBlog = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const token = req.headers.authorization;
-  await BlogServices.deleteBlogFromDB(id, token as string);
+  const user = req.user as TUser;
 
-  res.status(200).json({
-    statusCode: 200,
+  await BlogServices.deleteBlogFromDB(id, user);
+
+  res.status(httpStatusCode.OK).json({
+    statusCode: httpStatusCode.OK,
     success: true,
     message: "Blog deleted successfully",
   });

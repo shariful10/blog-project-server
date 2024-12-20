@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const httpStatusCode_1 = require("../../utils/httpStatusCode");
 const user_model_1 = __importDefault(require("../user/user.model"));
 const auth_utils_1 = require("./auth.utils");
 const createUserIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -25,16 +26,16 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.default.isUserExists(payload === null || payload === void 0 ? void 0 : payload.email);
     // Checking if the user is exist
     if (!user) {
-        throw new AppError_1.default(404, "User not found!");
+        throw new AppError_1.default(httpStatusCode_1.httpStatusCode.NOT_FOUND, "User not found!");
     }
     // Checking if the user is blocked
     const userStatus = user === null || user === void 0 ? void 0 : user.isBlocked;
     if (userStatus) {
-        throw new AppError_1.default(403, "This user is blocked!");
+        throw new AppError_1.default(httpStatusCode_1.httpStatusCode.FORBIDDEN, "This user is blocked!");
     }
     // Checking if the password is correct
     if (!(yield user_model_1.default.isPasswordMatched(payload === null || payload === void 0 ? void 0 : payload.password, user.password))) {
-        throw new AppError_1.default(403, "Password is incorrect!");
+        throw new AppError_1.default(httpStatusCode_1.httpStatusCode.FORBIDDEN, "Password is incorrect!");
     }
     // Create token and send it to the client
     const jwtPayload = {

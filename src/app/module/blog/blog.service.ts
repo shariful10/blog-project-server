@@ -1,71 +1,62 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import config from "../../config";
+import QueryBuilder from "../../builder/QueryBuilder";
 import AppError from "../../errors/AppError";
+import { httpStatusCode } from "../../utils/httpStatusCode";
+import { TUser } from "../user/user.interface";
 import User from "../user/user.model";
+import { searchableFields } from "./blog.const";
 import { TBlog } from "./blog.interface";
 import Blog from "./blog.model";
 
-const createBlogIntoDB = async (payload: TBlog, token: string) => {
-  if (!token) {
-    throw new AppError(403, "You are not authorized");
+const createBlogIntoDB = async (payload: TBlog, user: TUser) => {
+  const userData = await User.findOne({ email: user.email }).select(
+    "-password",
+  );
+
+  if (userData?.role !== "user") {
+    throw new AppError(
+      httpStatusCode.FORBIDDEN,
+      "You are not authorized to create a blog",
+    );
   }
 
-  const decoded = jwt.verify(
-    token,
-    config.jwtAccessSecret as string,
-  ) as JwtPayload;
+  const newPayload = { ...payload, author: userData?._id };
 
-  const { email } = decoded;
-
-  const user = await User.isUserExists(email);
-
-  // Checking if the user is exist
-  if (!user) {
-    throw new AppError(404, "User not found!");
-  }
-
-  const newPayload = { ...payload, author: user._id };
-
-  const result = await Blog.create(newPayload);
+  const result = (await Blog.create(newPayload)).populate("author");
   return result;
 };
 
-const getAllBlogsFromDB = async () => {
-  const result = await Blog.find()
-    .select("-__v")
-    .select("-isPublished")
-    .select("-createdAt")
-    .select("-updatedAt");
+const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
+  const blogQuery = new QueryBuilder(
+    Blog.find().select("-__v").populate("author"),
+    query,
+  )
+    .search(searchableFields)
+    .filter()
+    .sort();
+
+  const result = await blogQuery.modelQuery;
+
   return result;
 };
 
 const updateBlogIntoDB = async (
   id: string,
-  token: string,
+  user: TUser,
   payload: Partial<TBlog>,
 ) => {
-  if (!token) {
-    throw new AppError(403, "You are not authorized");
-  }
-
-  const decoded = jwt.verify(
-    token,
-    config.jwtAccessSecret as string,
-  ) as JwtPayload;
-
-  const { email } = decoded;
-
-  const user = await User.isUserExists(email);
+  const userData = await User.findOne({ email: user.email }).select(
+    "-password",
+  );
 
   const blog = await Blog.findById(id);
 
   // Check if the blog exists
   if (!blog) {
-    throw new AppError(404, "Blog not found");
+    throw new AppError(httpStatusCode.NOT_FOUND, "Blog not found");
   }
 
   // Checking if this user owns this blog
-  if (!blog?.author.equals(user._id)) {
+  if (!blog?.author.equals(userData?._id)) {
     throw new AppError(403, "You are not authorized to update this blog");
   }
 
@@ -74,44 +65,32 @@ const updateBlogIntoDB = async (
     runValidators: true,
   })
     .select("-__v")
-    .select("-createdAt")
-    .select("-updatedAt")
-    .select("-isPublished");
+    .populate("author");
 
   return result;
 };
 
-const deleteBlogFromDB = async (id: string, token: string) => {
-  if (!token) {
-    throw new AppError(403, "You are not authorized");
-  }
-
-  const decoded = jwt.verify(
-    token,
-    config.jwtAccessSecret as string,
-  ) as JwtPayload;
-
-  const { email } = decoded;
-
-  const user = await User.isUserExists(email);
+const deleteBlogFromDB = async (id: string, user: TUser) => {
+  const userData = await User.findOne({ email: user.email }).select(
+    "-password",
+  );
 
   const blog = await Blog.findById(id);
 
   // Check if the blog exists
   if (!blog) {
-    throw new AppError(404, "Blog not found");
+    throw new AppError(httpStatusCode.NOT_FOUND, "Blog not found");
   }
 
   // Checking if this user owns this blog
-  if (!blog?.author.equals(user._id)) {
-    throw new AppError(403, "You are not authorized to delete this blog");
+  if (!blog?.author.equals(userData?._id)) {
+    throw new AppError(
+      httpStatusCode.UNAUTHORIZE,
+      "You are not authorized to delete this blog",
+    );
   }
 
-  const result = await Blog.findByIdAndDelete(id)
-    .select("-__v")
-    .select("-createdAt")
-    .select("-updatedAt")
-    .select("-isPublished");
+  const result = await Blog.findByIdAndDelete(id).select("-__v");
 
   return result;
 };
