@@ -42,7 +42,7 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sortBy = (this?.query?.sort as string) || "-createdAt";
+    const sortBy = (this?.query?.sortBy as string) || "-createdAt";
     const sortOrder = (this?.query?.sortOrder as string) === "desc" ? "" : "-";
     this.modelQuery = this.modelQuery.sort(`${sortOrder}${sortBy}`);
     return this;

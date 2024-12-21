@@ -30,7 +30,7 @@ class QueryBuilder {
     }
     sort() {
         var _a, _b;
-        const sortBy = ((_a = this === null || this === void 0 ? void 0 : this.query) === null || _a === void 0 ? void 0 : _a.sort) || "-createdAt";
+        const sortBy = ((_a = this === null || this === void 0 ? void 0 : this.query) === null || _a === void 0 ? void 0 : _a.sortBy) || "-createdAt";
         const sortOrder = ((_b = this === null || this === void 0 ? void 0 : this.query) === null || _b === void 0 ? void 0 : _b.sortOrder) === "desc" ? "" : "-";
         this.modelQuery = this.modelQuery.sort(`${sortOrder}${sortBy}`);
         return this;
