@@ -14,19 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminServices = void 0;
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const httpStatusCode_1 = require("../../utils/httpStatusCode");
 const blog_model_1 = __importDefault(require("../blog/blog.model"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const blockUserIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = user_model_1.default.findByIdAndUpdate(id, { isBlocked: true });
     if (!result) {
-        throw new AppError_1.default(404, "User not found");
+        throw new AppError_1.default(httpStatusCode_1.httpStatusCode.NOT_FOUND, "User not found");
     }
     return result;
 });
 const deleteBlogFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield blog_model_1.default.findByIdAndDelete(id);
     if (!result) {
-        throw new AppError_1.default(404, "Blog not found");
+        throw new AppError_1.default(httpStatusCode_1.httpStatusCode.NOT_FOUND, "Blog not found");
     }
     return result;
 });

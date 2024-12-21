@@ -1,4 +1,5 @@
 import catchAsync from "../../utils/catchAsync";
+import { httpStatusCode } from "../../utils/httpStatusCode";
 import { AdminServices } from "./admin.service";
 
 const blockUser = catchAsync(async (req, res) => {
@@ -6,10 +7,10 @@ const blockUser = catchAsync(async (req, res) => {
 
   await AdminServices.blockUserIntoDB(userId);
 
-  res.status(200).json({
+  res.status(httpStatusCode.OK).json({
     success: true,
     message: "User blocked successfully",
-    statusCode: 200,
+    statusCode: httpStatusCode.OK,
   });
 });
 
@@ -18,10 +19,10 @@ const deleteBlog = catchAsync(async (req, res) => {
 
   await AdminServices.deleteBlogFromDB(id);
 
-  res.status(200).json({
+  res.status(httpStatusCode.OK).json({
     success: true,
     message: "Blog deleted successfully",
-    statusCode: 200,
+    statusCode: httpStatusCode.OK,
   });
 });
 

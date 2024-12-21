@@ -44,10 +44,5 @@ userSchema.statics.isPasswordMatched = function (plainTextPassword, hashedPasswo
         return yield bcrypt_1.default.compare(plainTextPassword, hashedPassword);
     });
 };
-// Check if JWT was issued before password was changed
-userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp, jwtIssuedTimestamp) {
-    const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
-    return passwordChangedTime > jwtIssuedTimestamp;
-};
 const User = (0, mongoose_1.model)("User", userSchema);
 exports.default = User;

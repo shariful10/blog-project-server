@@ -19,12 +19,6 @@ export interface UserModel extends Model<TUser> {
     plainTextPassword: string,
     hashedPassword: string,
   ): Promise<boolean>;
-
-  // Checking if JWT was issued before password was changed
-  isJWTIssuedBeforePasswordChanged(
-    passwordChangedTimestamp: Date,
-    jwtIssuedTimestamp: number,
-  ): boolean;
 }
 
 export type TUserRole = keyof typeof USER_ROLE;
